@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 114933353783680069}
   m_Layer: 0
   m_Name: Paratrooper
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,8 +100,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.6953125, y: 0.9609375}
+  m_Offset: {x: -0.012951851, y: -0.36918378}
+  m_Size: {x: 0.57874584, y: 0.7924514}
   m_Direction: 0
 --- !u!50 &5922736028643780932
 Rigidbody2D:
@@ -136,3 +136,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2501350da9f5bfb4eba2ca9117314a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _groundedSprite: {fileID: 21300000, guid: ff22052e1d895a048aa3e302d48b4333, type: 3}

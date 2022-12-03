@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class HelicopterBehaviour : MonoBehaviour
@@ -9,42 +12,18 @@ public class HelicopterBehaviour : MonoBehaviour
     [SerializeField] private int _minSpawns,_maxSpawns;
     [SerializeField] private float _spawnStart,_spawnEnd;
 
-    private Vector3[] _spawnPoints;
-    private int _spawnCount;
     private bool tripFinished;
 
-    
-    
-    void Start()
+    private void Start()
     {
-        _spawnCount = UnityEngine.Random.Range(_minSpawns, _maxSpawns + 1);
-        _spawnPoints = new Vector3[_spawnCount];
-        for (var i = 0; i < _spawnCount; i++)
-        {
-            var spawnPoint = new Vector3(UnityEngine.Random.Range(_spawnStart, _spawnEnd), transform.position.y - 0.1f);
-            _spawnPoints[i] = spawnPoint;
-        }
-        Array.Sort(_spawnPoints);
-
+        StartCoroutine(SpawnParatrooper(UnityEngine.Random.Range(_minSpawns, _maxSpawns + 1)));
     }
-
     void FixedUpdate()
     {
         if (isFlipped)
             transform.position += new Vector3(-0.1f * _speed, 0);
         else
             transform.position += new Vector3(0.1f * _speed, 0);
-
-        if(_spawnCount < 0)
-        {
-            return;
-        }
-
-        if(Vector3.Distance(transform.position,_spawnPoints[_spawnCount-1]) <= 0.2f)
-        {
-            SpawnParatrooper();
-            _spawnCount--;
-        }
 
         if(transform.position.x < _spawnStart - 2.0f || transform.position.x > _spawnEnd + 2.0f)
         {
@@ -57,7 +36,7 @@ public class HelicopterBehaviour : MonoBehaviour
         }    
     }
 
-    private void SpawnParatrooper()
+    private void SpawnTrooper()
     {
         Instantiate(_paraTrooper, transform.position, Quaternion.identity);
     }
@@ -68,9 +47,19 @@ public class HelicopterBehaviour : MonoBehaviour
             GameManager.instance.HelicopterDestroyed(isFlipped,true);
         else
             GameManager.instance.HelicopterDestroyed(isFlipped,false);
+
+        GameManager.instance.UpdateScore(10);
     }
 
-
+    IEnumerator SpawnParatrooper(int spawnCount)
+    {
+        while(spawnCount-- > 0)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.3f, 2));
+            SpawnTrooper();
+        }
+        yield break;
+    }
 
 
 }

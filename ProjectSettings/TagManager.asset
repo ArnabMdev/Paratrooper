@@ -7,6 +7,8 @@ TagManager:
   - Helicopter
   - Enemy
   - Parachute
+  - Ground
+  - GroundedSoldier
   layers:
   - Default
   - TransparentFX
@@ -14,7 +16,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Ground
   - 
   - 
   - 

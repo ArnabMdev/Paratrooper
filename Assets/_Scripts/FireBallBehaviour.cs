@@ -9,13 +9,16 @@ public class FireBallBehaviour : MonoBehaviour
     void Start()
     {
         _animator = GetComponent<Animator>();
+        _animator.SetTrigger("Firing");
+        StartCoroutine(Fire());
     }
 
     public IEnumerator Fire()
     {
+        yield return new WaitForSeconds(0.2f);
         while(true)
         {
-            transform.localPosition += new Vector3(0, 0.1f * _velocity);
+            transform.position += transform.up * _velocity;
             yield return new WaitForSeconds(0.1f);
 
         }
@@ -23,11 +26,30 @@ public class FireBallBehaviour : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.collider.tag == "Enemy" || collision.collider.tag == "Helicopter")
+        if (collision.transform.tag == "Enemy" || collision.transform.tag == "Helicopter")
         {
             StopCoroutine(Fire());
             Destroy(collision.gameObject);
-            Destroy(this);
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.tag == "Enemy" || collision.transform.tag == "Helicopter")
+        {
+            StopCoroutine(Fire());
+            Destroy(collision.gameObject);
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
 }
