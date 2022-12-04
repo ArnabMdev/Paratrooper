@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,13 +7,17 @@ public class CannonBehaviour : MonoBehaviour
 {
     [SerializeField] private GameObject FireBall;
     [SerializeField] private Transform Cannon;
-    
+    private AudioSource audioSourceFire,audioSourceExplode;
+
     private Animator _animator;
     private bool allowMotion = true;
     void Awake()
     {
         GameManager.PlayerLost += StopGame;
+        GameManager.CannonExplode += ExplodeSelf;
         _animator = GetComponentInChildren<Animator>();
+        audioSourceFire = GetComponentInChildren<AudioSource>();
+        audioSourceExplode = GetComponent<AudioSource>();
     }
 
 
@@ -41,6 +46,7 @@ public class CannonBehaviour : MonoBehaviour
             if (GameManager.instance._score > 0)
             {
                 _animator.SetTrigger("Fire");
+                audioSourceFire.Play();
                 Instantiate(FireBall, Cannon.position, transform.rotation);
                 GameManager.instance.UpdateScore(-1);
             }
@@ -51,8 +57,14 @@ public class CannonBehaviour : MonoBehaviour
     private void StopGame()
     {
         allowMotion = false;
-        Debug.Log("Lost");
     }
 
 
+    private void ExplodeSelf()
+    {
+        _animator.SetTrigger("Explode");
+        audioSourceExplode.Play();
+        GameManager.instance.StartCoroutine(GameManager.instance.FullStopGame());
+        
+    }
 }

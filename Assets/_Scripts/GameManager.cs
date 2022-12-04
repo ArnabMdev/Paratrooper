@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -8,16 +9,18 @@ public class GameManager : MonoBehaviour
     public int _score { get; private set; } = 10;
     public static GameManager instance;
     public static event Action PlayerLost;
+    public static event Action CannonExplode;
 
     [SerializeField] private GameObject _helicopter, _helicopterFlipped;
     [SerializeField] private Transform[] _helicopterSpawnPoints; 
-    [SerializeField] private int _helicoptersAtOnce = 2;
+    [SerializeField] private GameObject _mainMenu;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TextMeshProUGUI _playerLostText;
-
-
     [SerializeField] private int soldierOnLeft = 0,soldierOnRight = 0;
- 
+    [SerializeField] private int _soldiersArriving = 0;
+    [SerializeField] private CannonBehaviour _cannon;
+
+
 
     private void Awake()
     {
@@ -35,6 +38,11 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(spawnHelicopter(1f));
         StartCoroutine(spawnHelicopterFlipped(3f));
+    }
+
+    public Transform GetCannonPosition()
+    {
+        return _cannon.gameObject.transform;
     }
 
     public void HelicopterDestroyed(bool wasFlipped,bool finishedTrip)
@@ -100,10 +108,43 @@ public class GameManager : MonoBehaviour
         yield break;
     }
 
+    public IEnumerator FullStopGame()
+    {
+        yield return new WaitForSeconds(2f);
+        _playerLostText.text = $"Your Final Score {_score}";
+        _playerLostText.enabled = true;
+        yield return new WaitForSeconds(2f);
+        RestartGame();
+    }
+
     private void PlayerLostBehaviour()
     {
         StopAllCoroutines();
-        _playerLostText.text = $"Your Final Score {_score}";
-        _playerLostText.enabled = true;
+       
+    }
+
+    public void PlayGame()
+    {
+        _mainMenu.SetActive(false);
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
+    public void SoldierArriveAtCannon()
+    {
+        _soldiersArriving++;
+
+        if(_soldiersArriving >= 4)
+        {
+            CannonExplode?.Invoke();
+        }
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(0);
     }
 }
